@@ -19,7 +19,7 @@ Code Design is a local infinite-canvas plugin for Codex. It brings a tldraw-powe
 Send the following message to Codex:
 
 ```text
-Please install the Code Design Codex plugin from https://github.com/guofu/CoDesign.git.
+Please install the Code Design Codex plugin from https://github.com/guofu-shiqu/code-design.git.
 Clone the repository into ~/plugins/codesign, verify that .codex-plugin/plugin.json exists,
 add the plugin to the personal marketplace, then run codex plugin add codesign@personal.
 After installing, validate the plugin and tell me whether I should start a new conversation to load the new skills and MCP tools.
@@ -31,7 +31,7 @@ Clone the plugin into the default location referenced by the Codex personal mark
 
 ```bash
 mkdir -p ~/plugins
-git clone https://github.com/guofu/CoDesign.git ~/plugins/codesign
+git clone https://github.com/guofu-shiqu/code-design.git ~/plugins/codesign
 cd ~/plugins/codesign
 npm install
 npm run build
@@ -153,7 +153,7 @@ Useful environment variables:
 
 guofu  
 guofu@guofudeMacBook-Pro.local  
-https://github.com/guofu/CoDesign
+https://github.com/guofu-shiqu/code-design
 
 ## Acknowledgements
 

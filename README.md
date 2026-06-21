@@ -19,7 +19,7 @@ English README: [README.en.md](README.en.md)
 把下面这段发给 Codex：
 
 ```text
-请从 https://github.com/guofu/CoDesign.git 安装 Code Design Codex 插件。
+请从 https://github.com/guofu-shiqu/code-design.git 安装 Code Design Codex 插件。
 请 clone 仓库到 ~/plugins/codesign，确认 .codex-plugin/plugin.json 存在，
 把插件加入 personal marketplace，然后运行 codex plugin add codesign@personal。
 安装后请校验插件，并告诉我是否需要开启一个新对话来加载新技能和 MCP 工具。
@@ -31,7 +31,7 @@ English README: [README.en.md](README.en.md)
 
 ```bash
 mkdir -p ~/plugins
-git clone https://github.com/guofu/CoDesign.git ~/plugins/codesign
+git clone https://github.com/guofu-shiqu/code-design.git ~/plugins/codesign
 cd ~/plugins/codesign
 npm install
 npm run build
@@ -153,7 +153,7 @@ npm run build
 
 guofu  
 guofu@guofudeMacBook-Pro.local  
-https://github.com/guofu/CoDesign
+https://github.com/guofu-shiqu/code-design
 
 ## 致谢
 
