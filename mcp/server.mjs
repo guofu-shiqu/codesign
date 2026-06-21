@@ -301,10 +301,27 @@ function firstSelectedShapeId(selection) {
   return selection?.selectedShapes?.length === 1 ? selection.selectedShapes[0]?.id : null;
 }
 
-function choosePlacement({ store, pageId, parentId, anchorShape, width, height, margin, placement }) {
+function visibleBoundsFromViewState(viewState, width, height, margin) {
+  const camera = viewState?.camera;
+  if (!camera || typeof camera !== "object") return null;
+
+  const zoom = finiteNumber(camera.z, 1);
+  if (zoom <= 0) return null;
+
+  const viewportWidth = finiteNumber(viewState?.viewport?.width, 0);
+  const viewportHeight = finiteNumber(viewState?.viewport?.height, 0);
+  const screenX = viewportWidth > 0 ? viewportWidth / 2 : margin;
+  const screenY = viewportHeight > 0 ? viewportHeight / 2 : margin;
+  const x = (screenX - finiteNumber(camera.x, 0)) / zoom - (viewportWidth > 0 ? width / 2 : 0);
+  const y = (screenY - finiteNumber(camera.y, 0)) / zoom - (viewportHeight > 0 ? height / 2 : 0);
+
+  return { x, y, w: width, h: height };
+}
+
+function choosePlacement({ store, pageId, parentId, anchorShape, width, height, margin, placement, initialBounds }) {
   const anchorBounds = anchorShape ? pageBoundsForShape(store, anchorShape) : null;
-  let x = anchorBounds ? anchorBounds.x + anchorBounds.w + margin : 0;
-  let y = anchorBounds ? anchorBounds.y : 0;
+  let x = initialBounds && !anchorBounds ? initialBounds.x : anchorBounds ? anchorBounds.x + anchorBounds.w + margin : margin;
+  let y = initialBounds && !anchorBounds ? initialBounds.y : anchorBounds ? anchorBounds.y : margin;
 
   if (placement === "left" && anchorBounds) x = anchorBounds.x - width - margin;
   if (placement === "below" && anchorBounds) {
@@ -321,7 +338,15 @@ function choosePlacement({ store, pageId, parentId, anchorShape, width, height, 
   const stepX = Math.max(width + margin, 1);
   const stepY = Math.max(height + margin, 1);
   for (let attempt = 0; attempt < 60; attempt += 1) {
-    const candidate = { x, y, w: width, h: height };
+    const candidate =
+      !anchorBounds && initialBounds
+        ? {
+            x: x + [0, 1, -1, 2, -2][attempt % 5] * stepX,
+            y: y + Math.floor(attempt / 5) * stepY,
+            w: width,
+            h: height,
+          }
+        : { x, y, w: width, h: height };
     if (!obstacles.some((bounds) => rectsOverlap(candidate, bounds, margin / 2))) return candidate;
     if (placement === "below") y += stepY;
     else if (placement === "left") x -= stepX;
@@ -373,7 +398,11 @@ async function insertCoDesignImage(args = {}) {
   const { selection } = await readSelectionState(args);
   const viewState = await readViewState(args);
 
-  const anchorShapeId = nonEmptyString(args.anchorShapeId) || nonEmptyString(args.sourceShapeId) || firstSelectedShapeId(selection);
+  const useSelectionAnchor = args.useSelectionAnchor !== false;
+  const anchorShapeId =
+    nonEmptyString(args.anchorShapeId) ||
+    nonEmptyString(args.sourceShapeId) ||
+    (useSelectionAnchor ? firstSelectedShapeId(selection) : null);
   const anchorShape = anchorShapeId ? getRecord(store, anchorShapeId, "anchor shape") : null;
   const pageId =
     nonEmptyString(args.pageId) ||
@@ -393,7 +422,8 @@ async function insertCoDesignImage(args = {}) {
   );
   const margin = Math.max(0, finiteNumber(args.margin, 40));
   const placement = ["right", "left", "below"].includes(args.placement) ? args.placement : "right";
-  const bounds = choosePlacement({ store, pageId, parentId, anchorShape, width, height, margin, placement });
+  const initialBounds = visibleBoundsFromViewState(viewState, width, height, margin);
+  const bounds = choosePlacement({ store, pageId, parentId, anchorShape, width, height, margin, placement, initialBounds });
 
   const canvasDir = resolveCanvasDir(args);
   const assetsDir = join(canvasDir, "pages", pageDirName(pageId), "assets");
@@ -527,6 +557,11 @@ function toolDefinitions() {
           fileName: { type: "string", description: "Optional destination filename under the page assets folder." },
           placement: { type: "string", enum: ["right", "left", "below"], description: "Placement direction from the anchor." },
           margin: { type: "number", description: "Canvas units between the new image and nearby shapes. Defaults to 40." },
+          useSelectionAnchor: {
+            type: "boolean",
+            description:
+              "When true, a single selected shape becomes the placement anchor. Set false to insert into the current viewport instead.",
+          },
           matchAnchor: { type: "boolean", description: "Use the anchor display size when possible. Defaults to true." },
           displayWidth: { type: "number", description: "Displayed shape width in canvas units." },
           displayHeight: { type: "number", description: "Displayed shape height in canvas units." },

@@ -624,6 +624,10 @@ function getCoDesignViewState(editor) {
       x: camera.x,
       y: camera.y,
       z: camera.z
+    },
+    viewport: {
+      width: window.innerWidth,
+      height: window.innerHeight
     }
   }
 }
