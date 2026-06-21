@@ -53,6 +53,16 @@ const AI_IMAGE_TOOL_ID = 'ai-image'
 const AI_IMAGE_HOLDER_LABEL = 'AI 图片'
 const AI_IMAGE_HOLDER_DEFAULT_W = 320
 const AI_IMAGE_HOLDER_DEFAULT_H = 220
+const AI_IMAGE_HOLDER_SIZE_STORAGE_KEY = 'codesign.aiImageHolderSize'
+const AI_IMAGE_HOLDER_PRESETS = [
+  { id: 'xiaohongshu', label: '小红书 4:5', width: 1080, height: 1350 },
+  { id: 'square', label: '方图 1:1', width: 1024, height: 1024 },
+  { id: 'story', label: '竖版 9:16', width: 1080, height: 1920 },
+  { id: 'video', label: '横版 16:9', width: 1280, height: 720 },
+  { id: 'poster', label: '海报 3:4', width: 1200, height: 1600 },
+  { id: 'banner', label: '横幅 3:1', width: 1500, height: 500 }
+]
+const AI_IMAGE_HOLDER_DEFAULT_SIZE = AI_IMAGE_HOLDER_PRESETS[0]
 const ANNOTATION_TOOL_ID = 'codesign-annotation'
 const ANNOTATION_TOOL_LABEL = '标注'
 const ANNOTATION_DEFAULT_COLOR = 'red'
@@ -106,10 +116,72 @@ function getAiImageHolderMeta() {
   }
 }
 
+function clampImageDimension(value, fallback) {
+  const number = Number(value)
+  if (!Number.isFinite(number)) return fallback
+  return Math.min(Math.max(Math.round(number), 64), 4096)
+}
+
+function normalizeAiImageHolderSize(value) {
+  const width = clampImageDimension(value?.width, AI_IMAGE_HOLDER_DEFAULT_W)
+  const height = clampImageDimension(value?.height, AI_IMAGE_HOLDER_DEFAULT_H)
+  const preset = AI_IMAGE_HOLDER_PRESETS.find((item) => item.id === value?.id)
+
+  return {
+    id: preset?.id ?? value?.id ?? 'custom',
+    label: preset?.label ?? value?.label ?? '自定义',
+    width,
+    height
+  }
+}
+
+function readStoredAiImageHolderSize() {
+  try {
+    const storedValue = window.localStorage.getItem(AI_IMAGE_HOLDER_SIZE_STORAGE_KEY)
+    if (!storedValue) return AI_IMAGE_HOLDER_DEFAULT_SIZE
+    return normalizeAiImageHolderSize(JSON.parse(storedValue))
+  } catch {
+    return AI_IMAGE_HOLDER_DEFAULT_SIZE
+  }
+}
+
+let currentAiImageHolderSize = AI_IMAGE_HOLDER_DEFAULT_SIZE
+
+function getCurrentAiImageHolderSize() {
+  if (typeof window !== 'undefined') {
+    currentAiImageHolderSize = normalizeAiImageHolderSize(
+      currentAiImageHolderSize?.id ? currentAiImageHolderSize : readStoredAiImageHolderSize()
+    )
+  }
+
+  return currentAiImageHolderSize
+}
+
+function setCurrentAiImageHolderSize(size) {
+  currentAiImageHolderSize = normalizeAiImageHolderSize(size)
+
+  try {
+    window.localStorage.setItem(
+      AI_IMAGE_HOLDER_SIZE_STORAGE_KEY,
+      JSON.stringify(currentAiImageHolderSize)
+    )
+  } catch {
+    // Local storage is only a convenience for the toolbar default.
+  }
+
+  return currentAiImageHolderSize
+}
+
+function formatAiImageHolderSize(size) {
+  return `${size.width}×${size.height}`
+}
+
 function createAiImageHolderShape(editor, id, shapeOverrides = {}) {
-  const scale = editor.getResizeScaleFactor()
-  const { meta, props, ...shapeRecordOverrides } = shapeOverrides
+  const { meta, props, size, ...shapeRecordOverrides } = shapeOverrides
   const { scale: _scale, ...frameProps } = props ?? {}
+  const holderSize = normalizeAiImageHolderSize(size ?? getCurrentAiImageHolderSize())
+  const width = frameProps.w ?? holderSize.width
+  const height = frameProps.h ?? holderSize.height
 
   return editor.createShape({
     ...shapeRecordOverrides,
@@ -117,12 +189,18 @@ function createAiImageHolderShape(editor, id, shapeOverrides = {}) {
     type: 'frame',
     meta: {
       ...getAiImageHolderMeta(),
+      codesignAiImageHolderSize: {
+        presetId: holderSize.id,
+        label: holderSize.label,
+        width,
+        height
+      },
       ...meta
     },
     props: {
-      w: AI_IMAGE_HOLDER_DEFAULT_W * scale,
-      h: AI_IMAGE_HOLDER_DEFAULT_H * scale,
-      name: AI_IMAGE_HOLDER_LABEL,
+      w: width,
+      h: height,
+      name: `${AI_IMAGE_HOLDER_LABEL} · ${holderSize.label} · ${formatAiImageHolderSize({ width, height })}`,
       color: 'blue',
       ...frameProps
     }
@@ -130,15 +208,16 @@ function createAiImageHolderShape(editor, id, shapeOverrides = {}) {
 }
 
 function createAiImageHolderAtViewportCenter(editor) {
-  const scale = editor.getResizeScaleFactor()
-  const w = AI_IMAGE_HOLDER_DEFAULT_W * scale
-  const h = AI_IMAGE_HOLDER_DEFAULT_H * scale
+  const holderSize = getCurrentAiImageHolderSize()
+  const w = holderSize.width
+  const h = holderSize.height
   const center = editor.getViewportPageBounds().center
   const id = createShapeId()
 
   createAiImageHolderShape(editor, id, {
     x: center.x - w / 2,
     y: center.y - h / 2,
+    size: holderSize,
     props: { w, h }
   })
   editor.select(id)
@@ -451,13 +530,14 @@ const codesignUiOverrides = {
           createAiImageHolderAtViewportCenter(editor)
         },
         onDragStart(source, info) {
-          const scale = editor.getResizeScaleFactor()
+          const holderSize = getCurrentAiImageHolderSize()
           onDragFromToolbarToCreateShape(editor, info, {
             createShape: (id) =>
               createAiImageHolderShape(editor, id, {
+                size: holderSize,
                 props: {
-                  w: AI_IMAGE_HOLDER_DEFAULT_W * scale,
-                  h: AI_IMAGE_HOLDER_DEFAULT_H * scale
+                  w: holderSize.width,
+                  h: holderSize.height
                 }
               }),
             onDragEnd: (id) => editor.select(id)
@@ -535,6 +615,97 @@ function CoDesignAnnotationToolbarItem() {
   )
 }
 
+function CoDesignAiImageToolbarItem() {
+  const editor = useEditor()
+  const [isOpen, setIsOpen] = useState(false)
+  const [size, setSize] = useState(() => setCurrentAiImageHolderSize(readStoredAiImageHolderSize()))
+
+  function applySize(nextSize) {
+    setSize(setCurrentAiImageHolderSize(nextSize))
+  }
+
+  function updateCustomDimension(key, value) {
+    applySize({
+      id: 'custom',
+      label: '自定义',
+      width: key === 'width' ? value : size.width,
+      height: key === 'height' ? value : size.height
+    })
+  }
+
+  return (
+    <div className="codesign-ai-image-toolbar">
+      <CoDesignToolbarItem toolId={AI_IMAGE_TOOL_ID} />
+      <button
+        aria-expanded={isOpen ? 'true' : 'false'}
+        aria-label="选择 AI 图片尺寸"
+        className="codesign-ai-image-size-button"
+        onClick={() => setIsOpen((value) => !value)}
+        title={`当前尺寸：${size.label} ${formatAiImageHolderSize(size)}`}
+        type="button"
+      >
+        {size.width}:{size.height}
+      </button>
+      {isOpen ? (
+        <div className="codesign-ai-image-size-popover" role="dialog" aria-label="AI 图片尺寸">
+          <div className="codesign-ai-image-size-header">
+            <strong>AI 图片尺寸</strong>
+            <span>{formatAiImageHolderSize(size)}</span>
+          </div>
+          <div className="codesign-ai-image-preset-grid">
+            {AI_IMAGE_HOLDER_PRESETS.map((preset) => (
+              <button
+                className="codesign-ai-image-preset-button"
+                data-active={size.id === preset.id ? 'true' : 'false'}
+                key={preset.id}
+                onClick={() => applySize(preset)}
+                type="button"
+              >
+                <span>{preset.label}</span>
+                <small>{formatAiImageHolderSize(preset)}</small>
+              </button>
+            ))}
+          </div>
+          <div className="codesign-ai-image-custom-size">
+            <label>
+              宽
+              <input
+                inputMode="numeric"
+                min="64"
+                max="4096"
+                onChange={(event) => updateCustomDimension('width', event.target.value)}
+                type="number"
+                value={size.width}
+              />
+            </label>
+            <label>
+              高
+              <input
+                inputMode="numeric"
+                min="64"
+                max="4096"
+                onChange={(event) => updateCustomDimension('height', event.target.value)}
+                type="number"
+                value={size.height}
+              />
+            </label>
+          </div>
+          <button
+            className="codesign-ai-image-create-button"
+            onClick={() => {
+              createAiImageHolderAtViewportCenter(editor)
+              setIsOpen(false)
+            }}
+            type="button"
+          >
+            创建 {formatAiImageHolderSize(size)}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 function CoDesignToolbarDivider() {
   return <div aria-orientation="vertical" className="codesign-toolbar-divider" role="separator" />
 }
@@ -546,7 +717,7 @@ function CoDesignToolbar(props) {
       <CoDesignToolbarDivider />
       <SelectToolbarItem />
       <HandToolbarItem />
-      <CoDesignToolbarItem toolId={AI_IMAGE_TOOL_ID} />
+      <CoDesignAiImageToolbarItem />
       <CoDesignToolbarDivider />
       <AssetToolbarItem />
       <DrawToolbarItem />
