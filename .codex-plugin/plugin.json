@@ -3,11 +3,11 @@
   "version": "0.1.2",
   "description": "A local infinite canvas for Codex, powered by tldraw and built for visual thinking, image generation, and annotation-driven edits.",
   "author": {
-    "name": "ZHONG XIN",
-    "email": "zhongxin123456@gmail.com",
-    "url": "https://www.jiqiren.ai"
+    "name": "guofu",
+    "email": "guofu@guofudeMacBook-Pro.local",
+    "url": "https://github.com/guofu"
   },
-  "homepage": "https://www.jiqiren.ai",
+  "homepage": "https://github.com/guofu/CoDesign",
   "keywords": [
     "canvas",
     "tldraw",
@@ -21,9 +21,9 @@
     "displayName": "CoDesign",
     "shortDescription": "Create, annotate, and generate on a local infinite canvas in Codex.",
     "longDescription": "CoDesign brings a tldraw-powered infinite canvas into Codex for visual planning and creative iteration. Open a local canvas for the active project, sketch ideas, place AI image holders, generate images into selected slots, and turn annotated screenshots into revised image outputs while keeping canvas data in the user's project workspace.",
-    "developerName": "ZHONG XIN",
+    "developerName": "guofu",
     "category": "Productivity",
-    "websiteURL": "https://www.jiqiren.ai",
+    "websiteURL": "https://github.com/guofu/CoDesign",
     "brandColor": "#25BFEF",
     "logo": "./assets/app-icon.png",
     "composerIcon": "./assets/app-icon.png",

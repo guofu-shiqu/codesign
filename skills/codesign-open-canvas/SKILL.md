@@ -10,7 +10,7 @@ description: Open the CoDesign local web service, a tldraw-powered infinite canv
 1. Start the local CoDesign web service with the user's current Codex project directory, and keep the process running:
 
 ```bash
-/Users/<your-username>/plugins/codesign/scripts/start-canvas.sh /path/to/user/codex-project
+/Users/guofu/plugins/codesign/scripts/start-canvas.sh /path/to/user/codex-project
 ```
 
 Use the active workspace or project directory from the current Codex session for `/path/to/user/codex-project`. Do not pass the CoDesign plugin directory.
