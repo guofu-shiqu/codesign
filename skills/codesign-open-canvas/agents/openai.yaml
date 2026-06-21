@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDesign Open Canvas"
+  short_description: "Open the CoDesign infinite canvas"
+  default_prompt: "Use $codesign:codesign-open-canvas to open the CoDesign infinite canvas."
