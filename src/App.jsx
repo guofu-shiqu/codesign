@@ -71,6 +71,10 @@ const ANNOTATION_BEND_RATIO = 0.12
 const ANNOTATION_MIN_BEND = 16
 const ANNOTATION_MAX_BEND = 48
 const ANNOTATION_LABEL_POSITION = 0
+const ANNOTATION_COMMENT_TEXT = '评论'
+const ANNOTATION_COMMENT_NOTE_OFFSET_X = 28
+const ANNOTATION_COMMENT_NOTE_OFFSET_Y = -28
+const ANNOTATION_COMMENT_MARKER_SIZE = 18
 const ANNOTATION_SELECT_TEXT_MAX_ATTEMPTS = 8
 const ANNOTATION_SELECT_TEXT_SETTLE_ATTEMPTS = 4
 const annotationToolIconSvg = annotationToolIconRaw.replaceAll('black', 'currentColor')
@@ -235,6 +239,84 @@ function startEditingAnnotationArrowLabel(editor, arrowId) {
   pinAnnotationArrowLabelPosition(editor, arrowId)
   editor.getCurrentTool().setCurrentToolIdMask(ANNOTATION_TOOL_ID)
   selectAnnotationTextWhenReady(editor, arrowId)
+}
+
+function startEditingAnnotationComment(editor, noteId) {
+  const shape = editor.getShape(noteId)
+  if (!shape || !editor.canEditShape(shape)) {
+    return
+  }
+
+  editor.select(noteId)
+  startEditingShapeWithRichText(editor, noteId, { selectAll: true })
+  editor.getCurrentTool().setCurrentToolIdMask(ANNOTATION_TOOL_ID)
+  selectAnnotationTextWhenReady(editor, noteId)
+}
+
+function createAnnotationCommentAtPoint(editor, point) {
+  const scale = editor.getResizeScaleFactor()
+  const color = getAnnotationColor(editor)
+  const markerSize = ANNOTATION_COMMENT_MARKER_SIZE * scale
+  const markerId = createShapeId()
+  const noteId = createShapeId()
+
+  editor.createShapes([
+    {
+      id: markerId,
+      type: 'geo',
+      x: point.x - markerSize / 2,
+      y: point.y - markerSize / 2,
+      meta: {
+        codesignAnnotationComment: true,
+        codesignAnnotationCommentRole: 'marker',
+        codesignAnnotationCommentNoteId: noteId
+      },
+      props: {
+        w: markerSize,
+        h: markerSize,
+        geo: 'ellipse',
+        dash: 'solid',
+        growY: 0,
+        url: '',
+        scale: 1,
+        color,
+        labelColor: color,
+        fill: 'solid',
+        size: 's',
+        font: 'draw',
+        align: 'middle',
+        verticalAlign: 'middle',
+        richText: toRichText('')
+      }
+    },
+    {
+      id: noteId,
+      type: 'note',
+      x: point.x + ANNOTATION_COMMENT_NOTE_OFFSET_X * scale,
+      y: point.y + ANNOTATION_COMMENT_NOTE_OFFSET_Y * scale,
+      meta: {
+        codesignAnnotationComment: true,
+        codesignAnnotationCommentRole: 'note',
+        codesignAnnotationCommentMarkerId: markerId
+      },
+      props: {
+        color: 'yellow',
+        richText: toRichText(ANNOTATION_COMMENT_TEXT),
+        size: 'm',
+        font: 'draw',
+        align: 'start',
+        verticalAlign: 'start',
+        labelColor: 'black',
+        growY: 0,
+        fontSizeAdjustment: 1,
+        url: '',
+        scale,
+        textFirstEditedBy: null
+      }
+    }
+  ])
+
+  startEditingAnnotationComment(editor, noteId)
 }
 
 function pinAnnotationArrowLabelPosition(editor, arrowId, attempt = 0) {
@@ -478,7 +560,7 @@ class CoDesignAnnotationPointing extends StateNode {
 
     if (length < ANNOTATION_MIN_LENGTH / this.editor.getZoomLevel()) {
       this.editor.bailToMark(this.markId)
-      this.parent.transition('idle')
+      createAnnotationCommentAtPoint(this.editor, this.origin)
       return
     }
 
