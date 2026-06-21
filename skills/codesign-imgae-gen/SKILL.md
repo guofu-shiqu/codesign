@@ -1,15 +1,15 @@
 ---
 name: codesign-imgae-gen
-description: Generate a final AI bitmap into the selected CoDesign "AI 图片" holder, including any requested in-image text by default. Use when the user asks Codex to create, fill, replace, or place an AI-generated image inside the currently selected AI image placeholder on a CoDesign canvas.
+description: Generate a final AI bitmap into the selected Code Design "AI 图片" holder, including any requested in-image text by default. Use when the user asks Codex to create, fill, replace, or place an AI-generated image inside the currently selected AI image placeholder on a Code Design canvas.
 ---
 
-# CoDesign Imgae Gen
+# Code Design Imgae Gen
 
-Use this skill when the selected CoDesign canvas shape is an `AI 图片` holder created by the CoDesign toolbar.
+Use this skill when the selected Code Design canvas shape is an `AI 图片` holder created by the Code Design toolbar.
 
 ## Preconditions
 
-The CoDesign service should be running for the user's active project, usually at:
+The Code Design service should be running for the user's active project, usually at:
 
 ```text
 http://127.0.0.1:43217
@@ -31,13 +31,13 @@ meta flag. Support both shapes.
 
 ## Workflow
 
-1. Read the selected shape from CoDesign:
+1. Read the selected shape from Code Design:
 
    ```bash
    curl -s http://127.0.0.1:43217/api/selection
    ```
 
-   You can also use the CoDesign MCP `get_codesign_selection` tool if it is available.
+   You can also use the Code Design MCP `get_codesign_selection` tool if it is available.
 
 2. Continue only when exactly one selected shape has either:
 
@@ -86,7 +86,7 @@ meta flag. Support both shapes.
 
 6. Do not delete the holder unless the user explicitly asks for replacement. Keeping the holder lets Codex identify the intended slot again later.
 
-7. Save through CoDesign's API or edit the page snapshot carefully:
+7. Save through Code Design's API or edit the page snapshot carefully:
 
    ```bash
    curl -s http://127.0.0.1:43217/api/canvas

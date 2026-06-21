@@ -885,7 +885,7 @@ export default function App() {
       canvasEvents = new EventSource(CANVAS_EVENTS_ENDPOINT)
       canvasEvents.addEventListener('canvas-changed', loadRemoteCanvasSnapshot)
       canvasEvents.onerror = (error) => {
-        console.warn('CoDesign canvas live refresh disconnected.', error)
+        console.warn('Code Design canvas live refresh disconnected.', error)
       }
     }
 
@@ -990,7 +990,7 @@ export default function App() {
   }
 
   return (
-    <main className="codesign-canvas" aria-label="CoDesign infinite canvas">
+    <main className="codesign-canvas" aria-label="Code Design infinite canvas">
       <Tldraw
         snapshot={snapshot ?? undefined}
         inferDarkMode

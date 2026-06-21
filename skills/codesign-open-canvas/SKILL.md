@@ -1,19 +1,19 @@
 ---
 name: codesign-open-canvas
-description: Open the CoDesign local web service, a tldraw-powered infinite canvas. Use when the user asks to open, launch, view, or work in the CoDesign canvas or wants an infinite canvas inside Codex.
+description: Open the Code Design local web service, a tldraw-powered infinite workspace. Use when the user asks to start, launch, view, or work in Code Design or wants visual planning space inside Codex.
 ---
 
-# CoDesign Open Canvas
+# Code Design Workspace
 
 ## Workflow
 
-1. Start the local CoDesign web service with the user's current Codex project directory, and keep the process running:
+1. Start the local Code Design web service with the user's current Codex project directory, and keep the process running:
 
 ```bash
 /Users/guofu/plugins/codesign/scripts/start-canvas.sh /path/to/user/codex-project
 ```
 
-Use the active workspace or project directory from the current Codex session for `/path/to/user/codex-project`. Do not pass the CoDesign plugin directory.
+Use the active workspace or project directory from the current Codex session for `/path/to/user/codex-project`. Do not pass the Code Design plugin directory.
 
 2. Open the resulting local URL in the Codex in-app browser when the Browser tool chain is available.
 
@@ -31,7 +31,7 @@ globalThis.browser = await agent.browsers.get("iab");
 nodeRepl.write(await browser.documentation());
 ```
 
-3. Select or create a tab, make the browser visible because this skill is meant to open the canvas for the user, and navigate with `tab.goto(url)`:
+3. Select or create a tab, make the browser visible because this skill is meant to open the workspace for the user, and navigate with `tab.goto(url)`:
 
 ```js
 await (await browser.capabilities.get("visibility")).set(true);
@@ -41,7 +41,7 @@ if ((await tab.url()) !== url) {
 }
 ```
 
-Do not call `tab.goto(url)` if the selected tab is already on the CoDesign URL; that reloads the page and can disturb work in progress. If browser control is unavailable, or browser bootstrap fails before navigation with a tool-layer/session-metadata error such as `codex/sandbox-state-meta: missing field sandboxPolicy`, treat the CoDesign service start as successful and give the user the local URL instead of retrying browser control.
+Do not call `tab.goto(url)` if the selected tab is already on the Code Design URL; that reloads the page and can disturb work in progress. If browser control is unavailable, or browser bootstrap fails before navigation with a tool-layer/session-metadata error such as `codex/sandbox-state-meta: missing field sandboxPolicy`, treat the Code Design service start as successful and give the user the local URL instead of retrying browser control.
 
 ## Constraints
 

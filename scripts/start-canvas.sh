@@ -16,7 +16,7 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
-echo "CoDesign canvas: http://127.0.0.1:${PORT}"
-echo "CoDesign canvas data: ${CANVAS_DIR}/pages/<page-id>/codesign-canvas.json"
-echo "CoDesign page assets: ${CANVAS_DIR}/pages/<page-id>/assets -> http://127.0.0.1:${PORT}/page-assets/<page-id>/"
+echo "Code Design service: http://127.0.0.1:${PORT}"
+echo "Code Design canvas data: ${CANVAS_DIR}/pages/<page-id>/codesign-canvas.json"
+echo "Code Design page assets: ${CANVAS_DIR}/pages/<page-id>/assets -> http://127.0.0.1:${PORT}/page-assets/<page-id>/"
 exec npm run dev -- --host 127.0.0.1 --port "$PORT"

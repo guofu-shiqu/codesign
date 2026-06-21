@@ -1,6 +1,6 @@
-# CoDesign
+# Code Design
 
-CoDesign 是一个面向 Codex 的本地无限画布插件。它基于 tldraw 提供可视化画布，用于构思、标注、生成图片和根据标注图迭代图片。画布运行在本地网页服务中，数据默认保存到当前用户项目的 `canvas/` 目录，而不是保存到插件仓库里。
+Code Design 是一个面向 Codex 的本地无限画布插件。它基于 tldraw 提供可视化画布，用于构思、标注、生成图片和根据标注图迭代图片。画布运行在本地网页服务中，数据默认保存到当前用户项目的 `canvas/` 目录，而不是保存到插件仓库里。
 
 English README: [README.en.md](README.en.md)
 
@@ -9,8 +9,8 @@ English README: [README.en.md](README.en.md)
 - 在 Codex 中打开一个本地 tldraw 无限画布。
 - 在当前项目目录中持久化画布页面和图片资源。
 - 在画布中创建 AI image holder，并让 Codex 生成图片填入选中的 holder。
-- 上传或提供 CoDesign 标注截图，让 Codex 根据标注生成干净的新图并放到原图旁边。
-- 通过 CoDesign MCP 工具读取选择状态、插入图片，并保存到页面本地资源目录。
+- 上传或提供 Code Design 标注截图，让 Codex 根据标注生成干净的新图并放到原图旁边。
+- 通过 Code Design MCP 工具读取选择状态、插入图片，并保存到页面本地资源目录。
 
 ## 安装
 
@@ -19,7 +19,7 @@ English README: [README.en.md](README.en.md)
 把下面这段发给 Codex：
 
 ```text
-请从 https://github.com/guofu/CoDesign.git 安装 CoDesign Codex 插件。
+请从 https://github.com/guofu/CoDesign.git 安装 Code Design Codex 插件。
 请 clone 仓库到 ~/plugins/codesign，确认 .codex-plugin/plugin.json 存在，
 把插件加入 personal marketplace，然后运行 codex plugin add codesign@personal。
 安装后请校验插件，并告诉我是否需要开启一个新对话来加载新技能和 MCP 工具。
@@ -37,7 +37,7 @@ npm install
 npm run build
 ```
 
-确保 `~/.agents/plugins/marketplace.json` 中有 CoDesign 条目：
+确保 `~/.agents/plugins/marketplace.json` 中有 Code Design 条目：
 
 ```json
 {
@@ -77,10 +77,10 @@ codex plugin add codesign@personal
 在 Codex 中说：
 
 ```text
-Open the CoDesign canvas for this project.
+Open Code Design for this project.
 ```
 
-CoDesign 会启动本地服务，默认地址是：
+Code Design 会启动本地服务，默认地址是：
 
 ```text
 http://127.0.0.1:43217/
@@ -93,41 +93,41 @@ canvas/pages/<page-id>/codesign-canvas.json
 canvas/pages/<page-id>/assets/
 ```
 
-![在 Codex 中打开 CoDesign 画布](assets/open-canvas.png)
+![在 Codex 中打开 Code Design 画布](assets/open-canvas.png)
 
 ### 生成新图
 
-1. 打开 CoDesign 画布。
+1. 打开 Code Design 画布。
 2. 在画布里创建并选中一个 AI image holder。
 3. 在 Codex 中描述要生成的图片，例如：
 
 ```text
-Generate a new image into the selected CoDesign AI image holder.
+Generate a new image into the selected Code Design AI image holder.
 ```
 
 Codex 会读取选中的 holder，按它的比例生成图片，并插入到 holder 中。
 
-![使用 CoDesign 生成并插入新图](assets/generate-image.png)
+![使用 Code Design 生成并插入新图](assets/generate-image.png)
 
 ### 根据标注图生成新图
 
-1. 在 CoDesign 画布中对图片做标注。
+1. 在 Code Design 画布中对图片做标注。
 2. 截图并把标注截图发给 Codex。
 3. 使用提示：
 
 ```text
-Use my CoDesign annotation screenshot to generate a clean revised image beside the original.
+Use my Code Design annotation screenshot to generate a clean revised image beside the original.
 ```
 
 Codex 会读取截图里的标注和箭头，生成去掉标注痕迹的新图，并把结果放在原图旁边。原图和标注不会被删除或移动。
 
-![根据 CoDesign 标注截图生成修订图](assets/annotation-edit.png)
+![根据 Code Design 标注截图生成修订图](assets/annotation-edit.png)
 
 ## 技能
 
-- `codesign:codesign-open-canvas`：打开 CoDesign 本地画布。
+- `codesign:codesign-open-canvas`：打开 Code Design 本地画布。
 - `codesign:codesign-imgae-gen`：把生成图片插入选中的 AI image holder。
-- `codesign:codesign-image-edit`：根据用户提供的 CoDesign 标注截图生成修订图。
+- `codesign:codesign-image-edit`：根据用户提供的 Code Design 标注截图生成修订图。
 
 ## 本地开发
 
@@ -157,4 +157,4 @@ https://github.com/guofu/CoDesign
 
 ## 致谢
 
-CoDesign 的画布能力基于 [tldraw/tldraw](https://github.com/tldraw/tldraw) 实现。
+Code Design 的画布能力基于 [tldraw/tldraw](https://github.com/tldraw/tldraw) 实现。

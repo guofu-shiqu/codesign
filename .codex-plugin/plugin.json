@@ -18,9 +18,9 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "CoDesign",
+    "displayName": "Code Design",
     "shortDescription": "Create, annotate, and generate on a local infinite canvas in Codex.",
-    "longDescription": "CoDesign brings a tldraw-powered infinite canvas into Codex for visual planning and creative iteration. Open a local canvas for the active project, sketch ideas, place AI image holders, generate images into selected slots, and turn annotated screenshots into revised image outputs while keeping canvas data in the user's project workspace.",
+    "longDescription": "Code Design brings a tldraw-powered infinite canvas into Codex for visual planning and creative iteration. Open a local canvas for the active project, sketch ideas, place AI image holders, generate images into selected slots, and turn annotated screenshots into revised image outputs while keeping canvas data in the user's project workspace.",
     "developerName": "guofu",
     "category": "Productivity",
     "websiteURL": "https://github.com/guofu/CoDesign",
@@ -35,9 +35,9 @@
       "Project-local persistence"
     ],
     "defaultPrompt": [
-      "Open the CoDesign canvas for this project.",
-      "Use my CoDesign annotation screenshot to generate a clean revised image beside the original.",
-      "Generate a new image into the selected CoDesign AI image holder."
+      "Open Code Design for this project.",
+      "Use my Code Design annotation screenshot to generate a clean revised image beside the original.",
+      "Generate a new image into the selected Code Design AI image holder."
     ]
   }
 }

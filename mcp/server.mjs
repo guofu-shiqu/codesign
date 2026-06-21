@@ -3,7 +3,7 @@ import { basename, extname, join, relative, resolve, sep } from "node:path";
 import readline from "node:readline";
 import { generateKeyBetween } from "fractional-indexing";
 
-const SERVER_NAME = "CoDesign MCP";
+const SERVER_NAME = "Code Design MCP";
 const SERVER_VERSION = "0.1.1";
 const TOOL_GET_SELECTION = "get_codesign_selection";
 const TOOL_INSERT_IMAGE = "insert_codesign_image";
@@ -196,7 +196,7 @@ async function loadCanvasSnapshot(args) {
   const payload = await fetchJson(`${codesignUrl}/api/canvas`);
   const snapshot = payload?.snapshot ?? payload;
   if (!snapshot || typeof snapshot !== "object" || !snapshot.schema || !snapshot.store) {
-    throw new Error(`Expected CoDesign canvas snapshot from ${codesignUrl}/api/canvas`);
+    throw new Error(`Expected Code Design canvas snapshot from ${codesignUrl}/api/canvas`);
   }
   return { codesignUrl, snapshot, payload };
 }
@@ -449,7 +449,7 @@ async function insertCoDesignImage(args = {}) {
       crop: null,
       flipX: false,
       flipY: false,
-      altText: nonEmptyString(args.altText) || "CoDesign inserted image",
+      altText: nonEmptyString(args.altText) || "Code Design inserted image",
     },
     parentId,
     index,
@@ -485,15 +485,15 @@ function toolDefinitions() {
   return [
     {
       name: TOOL_GET_SELECTION,
-      title: "Get CoDesign Selection",
+      title: "Get Code Design Selection",
       description:
-        "Return the currently selected CoDesign/tldraw shapes and image asset metadata from a project's canvas/codesign-selection.json state file.",
+        "Return the currently selected Code Design/tldraw shapes and image asset metadata from a project's canvas/codesign-selection.json state file.",
       inputSchema: {
         type: "object",
         properties: {
           projectDir: {
             type: "string",
-            description: "Absolute CoDesign project directory. The tool reads <projectDir>/canvas/codesign-selection.json.",
+            description: "Absolute Code Design project directory. The tool reads <projectDir>/canvas/codesign-selection.json.",
           },
           canvasDir: {
             type: "string",
@@ -511,16 +511,16 @@ function toolDefinitions() {
     },
     {
       name: TOOL_INSERT_IMAGE,
-      title: "Insert CoDesign Image",
+      title: "Insert Code Design Image",
       description:
-        "Copy a local bitmap into a CoDesign page-local assets folder, create a tldraw image asset and shape, place it beside an anchor or clear page area, and save through the CoDesign canvas API.",
+        "Copy a local bitmap into a Code Design page-local assets folder, create a tldraw image asset and shape, place it beside an anchor or clear page area, and save through the Code Design canvas API.",
       inputSchema: {
         type: "object",
         properties: {
           imagePath: { type: "string", description: "Absolute local bitmap path to insert." },
-          projectDir: { type: "string", description: "Absolute CoDesign project directory containing canvas/." },
+          projectDir: { type: "string", description: "Absolute Code Design project directory containing canvas/." },
           canvasDir: { type: "string", description: "Absolute canvas directory. Overrides projectDir." },
-          codesignUrl: { type: "string", description: "Running CoDesign URL, for example http://127.0.0.1:43218." },
+          codesignUrl: { type: "string", description: "Running Code Design URL, for example http://127.0.0.1:43218." },
           pageId: { type: "string", description: "Target tldraw page id. Optional when an anchor or view-state page is available." },
           anchorShapeId: { type: "string", description: "Existing shape id to place beside, usually the source image or AI frame." },
           sourceShapeId: { type: "string", description: "Alias for anchorShapeId." },
@@ -555,7 +555,7 @@ async function handleToolCall(id, params) {
     const selectedShapes = selection.selectedShapes ?? [];
     const summary =
       selectedShapes.length === 0
-        ? "No CoDesign shapes are currently selected."
+        ? "No Code Design shapes are currently selected."
         : selectedShapes
             .map((shape) => {
               const assetName = shape.asset?.name ? ` (${shape.asset.name})` : "";
@@ -599,7 +599,7 @@ async function handleRequest(message) {
         version: SERVER_VERSION,
       },
       instructions:
-        "Read and update CoDesign canvas state. Use get_codesign_selection for persisted browser selection and insert_codesign_image to place local bitmap assets into the running CoDesign canvas without hand-writing tldraw records.",
+        "Read and update Code Design canvas state. Use get_codesign_selection for persisted browser selection and insert_codesign_image to place local bitmap assets into the running Code Design canvas without hand-writing tldraw records.",
     });
     return;
   }

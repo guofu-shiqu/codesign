@@ -521,7 +521,7 @@ function canvasStoragePlugin() {
             const body = await readRequestBody(req)
             const selection = JSON.parse(body)
             if (!isSelectionState(selection)) {
-              sendJson(res, 400, { error: 'Expected a CoDesign selection state.' })
+              sendJson(res, 400, { error: 'Expected a Code Design selection state.' })
               return
             }
 
@@ -568,7 +568,7 @@ function canvasStoragePlugin() {
             const body = await readRequestBody(req)
             const viewState = JSON.parse(body)
             if (!isViewState(viewState)) {
-              sendJson(res, 400, { error: 'Expected a CoDesign view state.' })
+              sendJson(res, 400, { error: 'Expected a Code Design view state.' })
               return
             }
 

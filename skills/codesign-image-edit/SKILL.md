@@ -1,15 +1,15 @@
 ---
 name: codesign-image-edit
-description: Generate new AI images from user-supplied CoDesign annotation screenshots. Use when the user provides one or more screenshots showing CoDesign images marked with the 批注 tool, arrows, or visible edit notes and wants Codex to apply those requested changes, create revised bitmap images, and place each result beside the corresponding original or in a nearby clear area without replacing, moving, hiding, or deleting the original images or annotations.
+description: Generate new AI images from user-supplied Code Design annotation screenshots. Use when the user provides one or more screenshots showing Code Design images marked with the 批注 tool, arrows, or visible edit notes and wants Codex to apply those requested changes, create revised bitmap images, and place each result beside the corresponding original or in a nearby clear area without replacing, moving, hiding, or deleting the original images or annotations.
 ---
 
-# CoDesign Image Edit
+# Code Design Image Edit
 
-Use this skill to turn user-provided CoDesign 批注 screenshots into revised AI-generated bitmaps placed next to the corresponding original images.
+Use this skill to turn user-provided Code Design 批注 screenshots into revised AI-generated bitmaps placed next to the corresponding original images.
 
 ## Preconditions
 
-The CoDesign service should be running for the active project, usually at:
+The Code Design service should be running for the active project, usually at:
 
 ```text
 http://127.0.0.1:43217
@@ -37,7 +37,7 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
 
    If the screenshot is too cropped, obstructed, or low-resolution to serve as a good image base, ask the user for the original image export or a cleaner screenshot of that specific image.
 
-   Do not read the current CoDesign canvas to discover edit intent. Use the screenshot for the requested changes. CoDesign state may be read later only to place the generated result without covering existing content.
+   Do not read the current Code Design canvas to discover edit intent. Use the screenshot for the requested changes. Code Design state may be read later only to place the generated result without covering existing content.
 
 4. Prepare image-generation input.
 
@@ -58,14 +58,14 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
    annotation-edit-20260620-153012.png
    ```
 
-6. Insert the revised image beside the original with CoDesign MCP.
+6. Insert the revised image beside the original with Code Design MCP.
 
-   Prefer the CoDesign MCP `insert_codesign_image` tool. Do not hand-write
+   Prefer the Code Design MCP `insert_codesign_image` tool. Do not hand-write
    tldraw `asset` / `shape` records or fractional `index` keys unless the MCP
    tool is unavailable. The tool copies the bitmap into the page-local assets
    folder, creates the tldraw image asset and image shape, generates a valid
    tldraw fractional index, places the image beside the anchor while avoiding
-   overlaps, and saves through the running CoDesign service.
+   overlaps, and saves through the running Code Design service.
 
    Add a new tldraw image asset and a new image shape. Do not update, remove, hide, reparent, or reorder the original image, the original `AI 图片` frame, or any annotation shapes.
 
@@ -73,7 +73,7 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
 
    - If the user has selected the original image, use that image as the anchor.
    - If the user has selected the original `AI 图片` frame, use that frame as the anchor.
-   - If the screenshot clearly shows the original image and there is a unique matching generated/original image or `AI 图片` frame on the current CoDesign page, use that as the anchor without asking the user to select it.
+   - If the screenshot clearly shows the original image and there is a unique matching generated/original image or `AI 图片` frame on the current Code Design page, use that as the anchor without asking the user to select it.
    - If there are multiple screenshots/outputs and the matching anchors are not uniquely identifiable, ask the user to select each corresponding anchor or provide an explicit placement order.
    - If no anchor is clear and the user has not required a specific side-by-side comparison, place the result in a nearby clear area on the current page where it does not cover, move, hide, or delete the original image or annotations.
 
@@ -97,9 +97,9 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
    }
    ```
 
-7. Save through CoDesign.
+7. Save through Code Design.
 
-   Only do CoDesign state access after the bitmap is generated. Use this access only to insert the new image beside the anchor or in a nearby clear area, not to discover edit intent.
+   Only do Code Design state access after the bitmap is generated. Use this access only to insert the new image beside the anchor or in a nearby clear area, not to discover edit intent.
 
    Preferred MCP call shape:
 
@@ -117,11 +117,11 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
      "shapeMeta": {
        "codesignGeneratedFromAnnotationEdit": true
      },
-     "altText": "Revised image generated from CoDesign annotation screenshot"
+     "altText": "Revised image generated from Code Design annotation screenshot"
    }
    ```
 
-   If the running CoDesign service uses a Vite fallback port, pass the actual
+   If the running Code Design service uses a Vite fallback port, pass the actual
    browser URL such as `http://127.0.0.1:43218` as `codesignUrl`.
 
    The MCP tool must return the new `assetId`, `shapeId`, saved asset path,
@@ -143,7 +143,7 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
    /page-assets/<page-dir>/<filename>
    ```
 
-   The CoDesign server will preserve per-page snapshots under:
+   The Code Design server will preserve per-page snapshots under:
 
    ```text
    canvas/pages/<page-id-without-page-prefix>/codesign-canvas.json
@@ -151,7 +151,7 @@ The user is responsible for providing the relevant screenshot(s). Do not auto-ca
 
 8. Verify visually.
 
-   Refresh the CoDesign tab or let Vite hot-reload, then confirm:
+   Refresh the Code Design tab or let Vite hot-reload, then confirm:
 
    - the original image is still in the same place
    - the original 批注 arrows and labels are still visible
