@@ -699,7 +699,6 @@ function CoDesignAnnotationToolbarItem() {
 
 function CoDesignAiImageToolbarItem() {
   const editor = useEditor()
-  const [isOpen, setIsOpen] = useState(false)
   const [size, setSize] = useState(() => setCurrentAiImageHolderSize(readStoredAiImageHolderSize()))
 
   function applySize(nextSize) {
@@ -725,7 +724,6 @@ function CoDesignAiImageToolbarItem() {
           const nextPreset = AI_IMAGE_HOLDER_PRESETS.find((preset) => preset.id === event.target.value)
           if (nextPreset) {
             applySize(nextPreset)
-            setIsOpen(false)
             return
           }
 
@@ -735,10 +733,6 @@ function CoDesignAiImageToolbarItem() {
             width: size.width,
             height: size.height
           })
-          setIsOpen(true)
-        }}
-        onFocus={() => {
-          if (size.id === 'custom') setIsOpen(true)
         }}
         title={`当前尺寸：${size.label} ${formatAiImageHolderSize(size)}`}
         value={AI_IMAGE_HOLDER_PRESETS.some((preset) => preset.id === size.id) ? size.id : 'custom'}
@@ -750,46 +744,30 @@ function CoDesignAiImageToolbarItem() {
         ))}
         <option value="custom">自定义 · {formatAiImageHolderSize(size)}</option>
       </select>
-      {isOpen ? (
-        <div className="codesign-ai-image-size-popover" role="dialog" aria-label="AI 图片尺寸">
-          <div className="codesign-ai-image-size-header">
-            <strong>自定义尺寸</strong>
-            <span>{formatAiImageHolderSize(size)}</span>
-          </div>
-          <div className="codesign-ai-image-custom-size">
-            <label>
-              宽
-              <input
-                inputMode="numeric"
-                min="64"
-                max="4096"
-                onChange={(event) => updateCustomDimension('width', event.target.value)}
-                type="number"
-                value={size.width}
-              />
-            </label>
-            <label>
-              高
-              <input
-                inputMode="numeric"
-                min="64"
-                max="4096"
-                onChange={(event) => updateCustomDimension('height', event.target.value)}
-                type="number"
-                value={size.height}
-              />
-            </label>
-          </div>
-          <button
-            className="codesign-ai-image-create-button"
-            onClick={() => {
-              createAiImageHolderAtViewportCenter(editor)
-              setIsOpen(false)
-            }}
-            type="button"
-          >
-            创建 {formatAiImageHolderSize(size)}
-          </button>
+      {size.id === 'custom' ? (
+        <div className="codesign-ai-image-custom-size" aria-label="自定义 AI 图片尺寸">
+          <label>
+            W
+            <input
+              inputMode="numeric"
+              min="64"
+              max="4096"
+              onChange={(event) => updateCustomDimension('width', event.target.value)}
+              type="number"
+              value={size.width}
+            />
+          </label>
+          <label>
+            H
+            <input
+              inputMode="numeric"
+              min="64"
+              max="4096"
+              onChange={(event) => updateCustomDimension('height', event.target.value)}
+              type="number"
+              value={size.height}
+            />
+          </label>
         </div>
       ) : null}
     </div>
