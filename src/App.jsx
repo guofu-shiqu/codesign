@@ -636,35 +636,43 @@ function CoDesignAiImageToolbarItem() {
   return (
     <div className="codesign-ai-image-toolbar">
       <CoDesignToolbarItem toolId={AI_IMAGE_TOOL_ID} />
-      <button
-        aria-expanded={isOpen ? 'true' : 'false'}
+      <select
         aria-label="选择 AI 图片尺寸"
-        className="codesign-ai-image-size-button"
-        onClick={() => setIsOpen((value) => !value)}
+        className="codesign-ai-image-size-select"
+        onChange={(event) => {
+          const nextPreset = AI_IMAGE_HOLDER_PRESETS.find((preset) => preset.id === event.target.value)
+          if (nextPreset) {
+            applySize(nextPreset)
+            setIsOpen(false)
+            return
+          }
+
+          applySize({
+            id: 'custom',
+            label: '自定义',
+            width: size.width,
+            height: size.height
+          })
+          setIsOpen(true)
+        }}
+        onFocus={() => {
+          if (size.id === 'custom') setIsOpen(true)
+        }}
         title={`当前尺寸：${size.label} ${formatAiImageHolderSize(size)}`}
-        type="button"
+        value={AI_IMAGE_HOLDER_PRESETS.some((preset) => preset.id === size.id) ? size.id : 'custom'}
       >
-        {size.width}:{size.height}
-      </button>
+        {AI_IMAGE_HOLDER_PRESETS.map((preset) => (
+          <option key={preset.id} value={preset.id}>
+            {preset.label} · {formatAiImageHolderSize(preset)}
+          </option>
+        ))}
+        <option value="custom">自定义 · {formatAiImageHolderSize(size)}</option>
+      </select>
       {isOpen ? (
         <div className="codesign-ai-image-size-popover" role="dialog" aria-label="AI 图片尺寸">
           <div className="codesign-ai-image-size-header">
-            <strong>AI 图片尺寸</strong>
+            <strong>自定义尺寸</strong>
             <span>{formatAiImageHolderSize(size)}</span>
-          </div>
-          <div className="codesign-ai-image-preset-grid">
-            {AI_IMAGE_HOLDER_PRESETS.map((preset) => (
-              <button
-                className="codesign-ai-image-preset-button"
-                data-active={size.id === preset.id ? 'true' : 'false'}
-                key={preset.id}
-                onClick={() => applySize(preset)}
-                type="button"
-              >
-                <span>{preset.label}</span>
-                <small>{formatAiImageHolderSize(preset)}</small>
-              </button>
-            ))}
           </div>
           <div className="codesign-ai-image-custom-size">
             <label>
